@@ -8,7 +8,7 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       workbox: {
-        maximumFileSizeToCacheInBytes: 8 * 1024 * 1024,
+        maximumFileSizeToCacheInBytes: 8388608, // 8 * 1024 * 1024
       },
       manifest: {
         name: 'Bible Reader',
@@ -28,6 +28,6 @@ export default defineConfig({
     })
   ],
   build: {
-    chunkSizeWarningLimit: 6000, 
+    chunkSizeWarningLimit: 8000, 
   }
 })
