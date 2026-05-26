@@ -6,6 +6,12 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
+      workbox: {
+        maximumFileSizeToCacheInBytes: 8 * 1024 * 1024,
+      },
+      build: {
+        chunkSizeWarningLimit: 800,
+      },
       manifest: {
         name: 'Bible Reader',
         short_name: 'Bible',
