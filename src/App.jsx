@@ -205,6 +205,7 @@ export default function App() {
             {lookupStep === "chapter" && (
               <div>
                 <button style={s.backBtn} onClick={() => setLookupStep("book")}>← Libros</button>
+                <br />
                 <div style={s.heading}>Libro: {selectedBook}</div>
                 <div style={s.subHeading}>Selecciona el Capítulo</div>
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 8 }}>
@@ -224,6 +225,7 @@ export default function App() {
                 {/* Header */}
                 <div style={{ display: "flex", alignItems: "center", marginBottom: 16, gap: 10 }}>
                   <button style={s.backBtn} onClick={() => setLookupStep("chapter")}>← Capítulos</button>
+                  <br />
                   <div style={{ fontWeight: "700", fontSize: F.verseRef, flex: 1, textAlign: "center" }}>
                     {selectedBook} {selectedChapter}
                   </div>
