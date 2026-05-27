@@ -62,13 +62,16 @@ export default function App() {
       margin: 0, 
       position: "relative",
       boxSizing: "border-box",
-      overflowX: "hidden" 
+      overflowX: "hidden" ,
+      maxWidth: "100%"
     },
     screen: { 
       flex: 1, 
       overflowY: "auto", 
+      overflowX: "hidden",
       padding: "16px 8px 90px",
-      boxSizing: "border-box" 
+      boxSizing: "border-box",
+      width: "100%"
     },
     card: { 
       background: T.surface, 
