@@ -13,8 +13,6 @@ export default function App() {
   const [lookupStep, setLookupStep]     = useState("book");
   const [selectedBook, setSelectedBook] = useState("");
   const [selectedChapter, setSelectedChapter] = useState(1);
-  const [selectedVerses, setSelectedVerses]   = useState([]);
-  const [verseIdx, setVerseIdx]         = useState(0);
 
   const T = THEMES[themeMode];
 
@@ -44,27 +42,22 @@ export default function App() {
     return match ? match.text : `[Versículo ${verseNum} no disponible]`;
   };
 
-  const toggleVerseSelection = (vNum) => {
-    setSelectedVerses(prev =>
-      prev.includes(vNum) ? prev.filter(x => x !== vNum) : [...prev, vNum].sort((a, b) => a - b)
-    );
-  };
 
   const F = {
-    body:    "clamp(20px, 7vw, 32px)",   // main reading / button text
-    small:   "clamp(14px, 4.5vw, 22px)", // labels, counter, nav labels
-    heading: "clamp(22px, 7.5vw, 34px)", // page headings
-    verseRef:"clamp(18px, 6vw, 30px)",   // "Book Ch:V" header in display
-    verse:   "clamp(20px, 7vw, 32px)",   // verse body text
-    gridNum: "clamp(16px, 5.5vw, 26px)", // chapter/verse number grid
-    bookBtn: "clamp(17px, 5.5vw, 26px)",   // book name buttons (long names, 2-col)
+    body:    "clamp(32px, 8vw, 38px)",   // main reading / button text
+    small:   "clamp(30px, 6vw, 28px)", // labels, counter, nav labels
+    heading: "clamp(36px, 9vw, 42px)", // page headings
+    verseRef:"clamp(32px, 7vw, 34px)",   // "Book Ch:V" header in display
+    verse:   "clamp(32px, 8vw, 38px)",   // verse body text
+    gridNum: "clamp(32px, 7vw, 32px)", // chapter/verse number grid
+    bookBtn: "clamp(32px, 6.5vw, 30px)",   // book name buttons (long names, 2-col)
   };
 
   const s = {
     app: {
       background: T.bg,
       color: T.text,
-      fontFamily: "'Ribeye', sans-serif",
+      fontFamily: "'Lexend', sans-serif",
       minHeight: "100vh",
       display: "flex",
       flexDirection: "column",
@@ -91,7 +84,7 @@ export default function App() {
       fontFamily: "inherit",
       boxSizing: "border-box",
     },
-
+    // Book buttons: 2-col grid, long names — smaller font, more padding room
     bookBtn: (active) => ({
       background: active ? T.accent : T.card,
       color: active ? "#FFF5EC" : T.text,
@@ -107,7 +100,7 @@ export default function App() {
       lineHeight: 1.3,
       wordBreak: "break-word",
     }),
-
+    // Chapter/verse number buttons: 5-col grid — number only, fits well
     numBtn: (active) => ({
       background: active ? T.accent : T.card,
       color: active ? "#FFF5EC" : T.text,
@@ -150,6 +143,13 @@ export default function App() {
     },
     heading: {
       fontSize: F.heading,
+      fontWeight: 700,
+      marginBottom: 14,
+      fontFamily: "inherit",
+      textAlign: "center",
+    },
+    subHeading: {
+      fontSize: F.small,
       fontWeight: 700,
       marginBottom: 14,
       fontFamily: "inherit",
@@ -205,11 +205,12 @@ export default function App() {
             {lookupStep === "chapter" && (
               <div>
                 <button style={s.backBtn} onClick={() => setLookupStep("book")}>← Libros</button>
-                <div style={s.heading}>{selectedBook}</div>
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 8 }}>
+                <div style={s.heading}>Libro: {selectedBook}</div>
+                <div style={s.subHeading}>Selecciona el Capítulo</div>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 8 }}>
                   {Array.from({ length: bibleMenu.find(b => b.name === selectedBook)?.chaptersCount || 1 }, (_, i) => i + 1).map(ch => (
                     <button key={ch} style={s.numBtn(false)}
-                      onClick={() => { setSelectedChapter(ch); setSelectedVerses([]); setLookupStep("verse"); }}>
+                      onClick={() => { setSelectedChapter(ch); setLookupStep("display"); }}>
                       {ch}
                     </button>
                   ))}
@@ -217,70 +218,38 @@ export default function App() {
               </div>
             )}
 
-            {/* STEP 3: VERSES */}
-            {lookupStep === "verse" && (
-              <div>
-                <button style={s.backBtn} onClick={() => setLookupStep("chapter")}>← Capítulos</button>
-                <div style={s.heading}>{selectedBook} {selectedChapter}</div>
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 8, marginBottom: 20 }}>
-                  {currentChapterVerses.map(v => (
-                    <button key={v.verse} style={s.numBtn(selectedVerses.includes(v.verse))}
-                      onClick={() => toggleVerseSelection(v.verse)}>
-                      {v.verse}
-                    </button>
-                  ))}
-                </div>
-                <button style={{ ...s.btn(), opacity: selectedVerses.length === 0 ? 0.4 : 1 }}
-                  disabled={selectedVerses.length === 0}
-                  onClick={() => { setVerseIdx(0); setLookupStep("display"); }}>
-                  Leer {selectedVerses.length > 0 ? `${selectedVerses.length} Versículo(s)` : "Versículos"}
-                </button>
-              </div>
-            )}
-
-            {/* STEP 4: DISPLAY */}
+            {/* STEP 3: DISPLAY — full chapter scrollable */}
             {lookupStep === "display" && (
               <div>
-                {/* Header row */}
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-                  <button style={s.backBtn} onClick={() => setLookupStep("book")}>✕ Cerrar</button>
+                {/* Header */}
+                <div style={{ display: "flex", alignItems: "center", marginBottom: 16, gap: 10 }}>
+                  <button style={s.backBtn} onClick={() => setLookupStep("chapter")}>← Capítulos</button>
                   <div style={{ fontWeight: "700", fontSize: F.verseRef, flex: 1, textAlign: "center" }}>
-                    {selectedBook} {selectedChapter}:{selectedVerses[verseIdx]}
+                    {selectedBook} {selectedChapter}
                   </div>
-                  <div style={{ minWidth: 70 }} />
                 </div>
 
-                {/* Verse text */}
-                <div style={{
-                  ...s.card,
-                  fontSize: F.verse,
-                  minHeight: 180,
-                  display: "flex",
-                  alignItems: "center",
-                  lineHeight: 1.65,
-                  textAlign: "left",
-                  wordBreak: "break-word",
-                  overflowWrap: "break-word",
-                }}>
-                  {getLocalVerseText(selectedVerses[verseIdx])}
-                </div>
-
-                {/* Nav arrows */}
-                <div style={{ display: "flex", gap: 12 }}>
-                  <button style={{ ...s.btn("secondary"), opacity: verseIdx === 0 ? 0.4 : 1 }}
-                    disabled={verseIdx === 0} onClick={() => setVerseIdx(v => v - 1)}>
-                    ← Anterior
-                  </button>
-                  <button style={{ ...s.btn(), opacity: verseIdx === selectedVerses.length - 1 ? 0.4 : 1 }}
-                    disabled={verseIdx === selectedVerses.length - 1} onClick={() => setVerseIdx(v => v + 1)}>
-                    Siguiente →
-                  </button>
-                </div>
-
-                {/* Counter */}
-                <div style={{ textAlign: "center", color: T.muted, fontSize: F.small, marginTop: 4 }}>
-                  Versículo {verseIdx + 1} de {selectedVerses.length}
-                </div>
+                {/* All verses */}
+                {currentChapterVerses.map(v => (
+                  <div key={v.verse} style={{
+                    ...s.card,
+                    fontSize: F.verse,
+                    lineHeight: 1.65,
+                    wordBreak: "break-word",
+                    overflowWrap: "break-word",
+                  }}>
+                    <span style={{
+                      display: "block",
+                      fontSize: F.body,
+                      color: T.muted,
+                      fontWeight: 700,
+                      marginBottom: 6,
+                    }}>
+                      {selectedBook} {selectedChapter}:{v.verse}
+                    </span>
+                    {v.text}
+                  </div>
+                ))}
               </div>
             )}
           </>
