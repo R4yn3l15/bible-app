@@ -88,7 +88,7 @@ export default function App() {
       border: `1px solid ${active ? T.accent : T.border}`, 
       borderRadius: 12, 
       padding: "16px 4px", 
-      fontSize: "2rem", 
+      fontSize: "1.5rem", 
       cursor: "pointer", 
       fontWeight: active ? "700" : "400", 
       boxSizing: "border-box",
