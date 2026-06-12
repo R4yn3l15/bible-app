@@ -1,4 +1,10 @@
-# React + Vite
+# Personal Experiment
+
+This is a vibe-coded personal experiment.
+
+For a special someone to help them read the bible.
+
+## React + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
